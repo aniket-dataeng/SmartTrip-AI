@@ -4,16 +4,82 @@ import TripForm from './components/TripForm'
 import ItineraryList from './components/ItineraryList'
 import Hero from './components/Hero'
 import Toast from './components/Toast'
+import AgentStatus from './components/AgentStatus'
+import DisruptionPanel from './components/DisruptionPanel'
 import './styles/theme.css'
 
 function App() {
   const [itinerary, setItinerary] = useState(null)
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState(null)
+  const [agentStage, setAgentStage] = useState(null) // 'planner', 'auditor', 'reoptimizer'
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
+  }
+
+  const simulateThinking = async (stages) => {
+    for (const stage of stages) {
+      setAgentStage(stage)
+      await new Promise(resolve => setTimeout(resolve, 1500))
+    }
+  }
+
+  const handleGenerate = async (destination, budget, travelStyle) => {
+    setLoading(true)
+    setItinerary(null)
+    
+    // Mimic multi-agent thinking
+    await simulateThinking(['planner', 'auditor'])
+    
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destination, budget, travel_style: travelStyle, interests: [] })
+      })
+      const data = await response.json()
+      if (data.success) {
+        setItinerary(data.itinerary)
+        showToast('Itinerary orchestrated successfully!')
+      } else {
+        showToast(data.error || 'Failed to generate', 'error')
+      }
+    } catch (err) {
+      showToast('Backend connection error', 'error')
+    } finally {
+      setLoading(false)
+      setAgentStage(null)
+    }
+  }
+
+  const handleDisrupt = async (type) => {
+    if (!itinerary) {
+      showToast('Generate a trip first!', 'error')
+      return
+    }
+
+    setLoading(true)
+    showToast(`CHAOS DETECTED: ${type.toUpperCase()}`, 'error')
+    
+    // Mimic the Re-Optimizer thinking
+    await simulateThinking(['reoptimizer'])
+
+    // In a real app, we'd call /api/replan. For this mimic, we'll simulate a change.
+    const updated = JSON.parse(JSON.stringify(itinerary))
+    if (type === 'rain') {
+      updated.days[0].activities = updated.days[0].activities.map(a => ({
+        ...a,
+        title: a.weather_resistant ? a.title : `[INDOOR] ${a.title} Alternative`,
+        description: `Re-planned for rainy conditions. Original: ${a.description}`
+      }))
+    }
+    
+    setItinerary(updated)
+    setLoading(false)
+    setAgentStage(null)
+    showToast('Plan re-optimized for real-time conditions!', 'success')
   }
 
   return (
@@ -23,13 +89,20 @@ function App() {
         <aside className="sidebar glass">
           <div className="sidebar-content">
             <div className="brand-badge">SMART TRIP AI</div>
-            <h2>Manifest Your Journey</h2>
-            <p className="subtitle">AI-Powered Orchestration</p>
-            <TripForm
-              setItinerary={setItinerary}
-              setLoading={setLoading}
-              showToast={showToast}
-            />
+            <h2>Global Concierge</h2>
+            <p className="subtitle">Agentic Multi-Agent Orchestration</p>
+            
+            <AgentStatus stage={agentStage} />
+
+            {!itinerary && (
+              <TripForm
+                onGenerate={handleGenerate}
+                loading={loading}
+                showToast={showToast}
+              />
+            )}
+
+            {itinerary && <DisruptionPanel onDisrupt={handleDisrupt} />}
           </div>
         </aside>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const TripForm = ({ setItinerary, setLoading, showToast }) => {
+const TripForm = ({ onGenerate, loading }) => {
   const [formData, setFormData] = useState({
     destination: '',
     budget: 50000,
@@ -12,40 +12,7 @@ const TripForm = ({ setItinerary, setLoading, showToast }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const payload = {
-        destination: formData.destination,
-        budget: parseInt(formData.budget),
-        dates: {
-          start: formData.startDate,
-          end: formData.endDate
-        },
-        interests: formData.interests.split(',').map(i => i.trim()).filter(i => i),
-        travel_style: formData.travelStyle
-      }
-
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-
-      const data = await response.json()
-      
-      if (data.success) {
-        setItinerary(data.itinerary)
-        showToast('Itinerary generated successfully!')
-      } else {
-        showToast(data.error || 'Failed to generate itinerary', 'error')
-      }
-    } catch (err) {
-      showToast('Network error, check console', 'error')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+    onGenerate(formData.destination, formData.budget, formData.travelStyle)
   }
 
   return (
@@ -115,8 +82,8 @@ const TripForm = ({ setItinerary, setLoading, showToast }) => {
         </select>
       </div>
 
-      <button type="submit" className="btn-primary">
-        Manifest My Trip ✈️
+      <button type="submit" className="btn-primary" disabled={loading}>
+        {loading ? 'Orchestrating...' : 'Manifest My Trip ✈️'}
       </button>
 
       <style>{`
