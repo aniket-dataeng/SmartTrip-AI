@@ -1,17 +1,21 @@
-# Architectural Prompts
+# SmartTrip-AI Architectural Prompts
 
-## 1. Project Initialization
-**Prompt:** `instantiate` (based on AGENTS.md instructions)
-**Action:** Set up 3-layer architecture: Directives, Orchestration (LLM), and Execution (Deterministic scripts).
-**Date:** 2026-05-08
+This log documents the high-level prompts used to build and fix the SmartTrip-AI travel copilot.
 
-## 2. Phase 1 — Backend AI Engine
-**Prompt:** `Create the backend AI engine: Gemini client (Flash/Pro), itinerary generation with budget optimization + route sequencing, dynamic replanning engine, weather/places services with mock fallback, FastAPI server with 4 REST endpoints, Pydantic models for all contracts, and 29 unit tests.`
-**Architecture Decisions:**
-- 3-layer architecture: Directives (SOPs) → Orchestration (FastAPI) → Execution (Python scripts)
-- Gemini 2.5 Flash as default (cost-efficient), Pro reserved for complex reasoning
-- Curated local data fallback when Google Places/Weather API keys are absent
-- Budget optimizer with travel-style-based category ratios
-- Nearest-neighbor route optimization with haversine distance
-**Date:** 2026-05-08
+## System Foundation
+- "Create a 3-layer architecture for an AI travel copilot: Directives (SOPs), Execution (Python AI Engine), and Frontend (React/Vite)."
+- "Design Pydantic models for structured itinerary data, including day-wise activities, costs, and budget tracking."
 
+## AI Engine Calibration
+- "Implement a Gemini API client with automatic retries and structured JSON output using Pydantic validation."
+- "Orchestrate itinerary generation by fetching local attractions via Google Places API and processing them with Gemini 2.5 Flash."
+- "Build a dynamic replanning engine that adjusts itineraries based on weather disruptions or budget changes."
+
+## High-Fidelity Frontend
+- "Design a premium, glassmorphic React dashboard for travel planning with a sidebar for inputs and a timeline-based viewport for itineraries."
+- "Implement mobile-first responsive layouts using CSS variables and modern flex/grid systems."
+- "Integrate a Vite proxy to provide seamless communication between the React frontend (5174) and FastAPI backend (8001)."
+
+## Fixes & Optimization
+- "Resolved Gemini 'Model Not Found' errors by identifying and switching to the latest available Gemini 2.5 models."
+- "Restored missing core components and fixed CSS @import order for clean production builds."

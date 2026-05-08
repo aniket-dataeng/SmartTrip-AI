@@ -16,9 +16,8 @@ _API_KEY = os.getenv("GEMINI_API_KEY", "")
 _MAX_RETRIES = 3
 _RETRY_DELAY_SEC = 2
 
-# Model selection: Flash for speed, Pro for complex reasoning
-MODEL_FLASH = "gemini-2.5-flash-preview-04-17"
-MODEL_PRO = "gemini-2.5-pro-preview-05-06"
+MODEL_FLASH = "gemini-2.5-flash"
+MODEL_PRO = "gemini-2.5-pro"
 
 
 def _get_client():
@@ -38,18 +37,6 @@ def generate_json(
 ) -> dict:
     """
     Send a prompt to Gemini and get structured JSON back.
-
-    Args:
-        prompt: The user-facing prompt content
-        system_instruction: System-level instructions for the model
-        use_pro: Use Pro model for complex reasoning (default: Flash)
-        temperature: Creativity level (0.0 = deterministic, 1.0 = creative)
-
-    Returns:
-        Parsed JSON dict from the model response
-
-    Raises:
-        RuntimeError: If all retries fail
     """
     _get_client()
 
@@ -68,6 +55,12 @@ def generate_json(
         try:
             response = model.generate_content(prompt)
             raw_text = response.text.strip()
+            # Handle potential markdown code blocks in response
+            if raw_text.startswith("```json"):
+                raw_text = raw_text.replace("```json", "", 1).rsplit("```", 1)[0].strip()
+            elif raw_text.startswith("```"):
+                raw_text = raw_text.replace("```", "", 1).rsplit("```", 1)[0].strip()
+                
             return json.loads(raw_text)
 
         except json.JSONDecodeError as e:
@@ -89,7 +82,6 @@ def generate_text(
 ) -> str:
     """
     Send a prompt to Gemini and get plain text back.
-    Useful for summaries and reasoning chains.
     """
     _get_client()
 

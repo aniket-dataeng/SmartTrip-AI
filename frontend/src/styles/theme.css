@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  /* GenZ Modernist Palette */
+  --bg-deep: #0F172A;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --primary: #7C3AED;
+  --primary-glow: rgba(124, 58, 237, 0.3);
+  --accent: #10B981;
+  --text-main: #F8FAFC;
+  --text-dim: #94A3B8;
+  
+  /* Typography */
+  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(263,88%,20%,0.15) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,80%,15%,0.15) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(160,84%,20%,0.15) 0, transparent 50%);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.04em;
+}
+
+/* Glassmorphism Classes */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
